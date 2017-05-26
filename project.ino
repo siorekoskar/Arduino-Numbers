@@ -42,7 +42,6 @@ byte arr[16] = {
     B10001110 //F
 };
 
-
 ////////////////////////////////////////SETUP/////////////////////////////////
 void setup() {
   Serial.begin(9600);
@@ -54,23 +53,32 @@ void setup() {
 ////////////////////////////////////////MAIN LOOP/////////////////////////////////
 void loop() {
   if(programStarted){
-    for(int i = 4; i>=1; i--){
-      digitChanger(i);
-      activateDigitWithNumber();
-      delay(400);
-    }
-  
-   } else{
-      activateDigitWithNumber();
-   }
+    digitChanger(); 
+  } else{
+     activateDigitWithNumber();
+  }
 }
 
-void digitChanger(int digitToStart){
-    startDigit(digitToStart);
-    if(digitToStart == 4){
-      stopDigit(1);
+////////////////////////////////////////FUNCTIONS/////////////////////////////////
+void digitChanger(){
+    for(int i = 4; i>=1; i--){
+      startDigit(i);
+      startDigit(i+1);
+ 
+      activateDigitWithNumber();
+      delay(400);
+      if(i == 4){
+        stopDigit(1);
+      }
+      if(i == 1){
+      stopDigit(2);
+      startDigit(1);
+      stopDigit(2);
     } else {
-      stopDigit(digitToStart+1);
+     stopDigit(i);
+      stopDigit(i+1);
+    }
+
     }
 }
 
@@ -120,11 +128,15 @@ void setupBars(){
 }
 
 void startDigit(int digit){
-  digitalWrite(1+digit, HIGH);
+  if(digit <=4 && digit >=1){
+    digitalWrite(1+digit, HIGH);
+  }
 }
 
 void stopDigit(int digit){
-  digitalWrite(1+digit, LOW);
+  if(digit <=4 && digit >=1 ){
+    digitalWrite(1+digit, LOW);
+  }
 }
 
 boolean recvWithEndMarker() {
