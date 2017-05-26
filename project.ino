@@ -54,20 +54,24 @@ void setup() {
 ////////////////////////////////////////MAIN LOOP/////////////////////////////////
 void loop() {
   if(programStarted){
-  for(int i = 4; i>=1; i--){
-    startDigit(i);
-    if(i == 4){
+    for(int i = 4; i>=1; i--){
+      digitChanger(i);
+      activateDigitWithNumber();
+      delay(400);
+    }
+  
+   } else{
+      activateDigitWithNumber();
+   }
+}
+
+void digitChanger(int digitToStart){
+    startDigit(digitToStart);
+    if(digitToStart == 4){
       stopDigit(1);
     } else {
-      stopDigit(i+1);
+      stopDigit(digitToStart+1);
     }
-    activateDigitWithNumber();
-    delay(400);
-  }
-  
-  } else{
-    activateDigitWithNumber();
-  }
 }
 
 void activateDigitWithNumber(){
@@ -77,10 +81,14 @@ void activateDigitWithNumber(){
     deleteNumber();
     writeNumber(parsed);
     if(!programStarted){
-      programStarted = true;
-      Serial.println("Program started");
+      startProgram();
     }
   }
+}
+
+boolean startProgram(){
+  programStarted = true;
+  Serial.println("Program started");
 }
 
 void writeNumber(int whichNumber){
