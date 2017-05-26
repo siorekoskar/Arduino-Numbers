@@ -7,11 +7,13 @@
 #define G 16
 #define DOT 13
 
-int d1=2,d2=3,d3=4,d4=5;
+byte digits[4] = {3,5,6,9};
+byte pins[8] = {2,4,7,8,10,11,12,13};
 const byte numChars = 32;
 char receivedChars[numChars]; 
 boolean newData = false;
 boolean programStarted = false;
+int speed = 400;
 
 void writeNumber(int whichNumber);
 void setupBars();
@@ -52,34 +54,41 @@ void setup() {
 
 ////////////////////////////////////////MAIN LOOP/////////////////////////////////
 void loop() {
-  if(programStarted){
+
+  startDigit(3);
+  activateDigitWithNumber();
+ /* if(programStarted){
     digitChanger(); 
   } else{
      activateDigitWithNumber();
-  }
+  }*/
+  //analogWrite(3, 15);
+  //analogWrite(5, 50);
 }
 
 ////////////////////////////////////////FUNCTIONS/////////////////////////////////
+void writeMethod
+
 void digitChanger(){
-    for(int i = 4; i>=1; i--){
-      startDigit(i);
-      startDigit(i+1);
+ /*   for(int i = 3; i>=0; i--){
+      startDigit(digits[i]);
+      startDigit(digits[i+1]);
  
       activateDigitWithNumber();
-      delay(400);
-      if(i == 4){
-        stopDigit(1);
+      delay(speed);
+      if(i == 3){
+        stopDigit(digits[0]);
       }
-      if(i == 1){
-      stopDigit(2);
-      startDigit(1);
-      stopDigit(2);
+      if(i == 0){
+      stopDigit(digits[1]);
+      startDigit(digits[0]);
+      stopDigit(digits[1]);
     } else {
-     stopDigit(i);
-      stopDigit(i+1);
+     stopDigit(digits[i]);
+      stopDigit(digits[i+1]);
     }
 
-    }
+    }*/
 }
 
 void activateDigitWithNumber(){
@@ -102,40 +111,40 @@ boolean startProgram(){
 void writeNumber(int whichNumber){
   for(byte i = 7; i >= 1;i--){
     if(bitRead(arr[whichNumber], i)){
-      digitalWrite(DOT -i, LOW);
+      digitalWrite(pins[7 -i], LOW);
     }
   }
 }
 
 void deleteNumber(){
-  for(int i =6; i<= 12; i++){
-    digitalWrite(i, HIGH);
+  for(int i =0; i<= 7; i++){
+    digitalWrite(pins[i], HIGH);
   }
 }
 
 void setupDigits(){
-  for(int i=2; i<=5;i++){
-    pinMode(i,OUTPUT);
-    digitalWrite(i, LOW);
+  for(int i=0; i<=3;i++){
+    pinMode(digits[i],OUTPUT);
+    digitalWrite(digits[i], LOW);
   }
 }
 
 void setupBars(){
-  for(int i = 6; i<=13; i++){
-    pinMode(i, OUTPUT);
-    digitalWrite(i, HIGH);
+  for(int i = 0; i<=8; i++){
+    pinMode(pins[i], OUTPUT);
+    digitalWrite(pins[i], HIGH);
   }
 }
 
-void startDigit(int digit){
-  if(digit <=4 && digit >=1){
-    digitalWrite(1+digit, HIGH);
+void startDigit(int num){
+  if(num <=3 && num >=0){
+    digitalWrite(digits[num], HIGH);
   }
 }
 
-void stopDigit(int digit){
-  if(digit <=4 && digit >=1 ){
-    digitalWrite(1+digit, LOW);
+void stopDigit(int num){
+  if(num <=3 && num >=0 ){
+    digitalWrite(digits[num], LOW);
   }
 }
 
