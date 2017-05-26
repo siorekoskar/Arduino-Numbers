@@ -11,11 +11,13 @@ int d1=2,d2=3,d3=4,d4=5;
 const byte numChars = 32;
 char receivedChars[numChars]; 
 boolean newData = false;
+boolean programStarted = false;
 
 void writeNumber(int whichNumber);
 void setupBars();
 void setupDigits();
 void deleteNumber();
+void activateDigitWithNumber();
 
 void showNewData();
 boolean recvWithEndMarker();
@@ -47,18 +49,36 @@ void setup() {
   Serial.println("<Arduino is ready>");
   setupDigits();
   setupBars();
-
-  startDigit(2);
 }
 
 ////////////////////////////////////////MAIN LOOP/////////////////////////////////
 void loop() {
+  if(programStarted){
+  for(int i = 4; i>=1; i--){
+    startDigit(i);
+    if(i == 4){
+      stopDigit(1);
+    } else {
+      stopDigit(i+1);
+    }
+    activateDigitWithNumber();
+    delay(400);
+  }
+  
+  } else{
+    activateDigitWithNumber();
+  }
+}
+
+void activateDigitWithNumber(){
   if(recvWithEndMarker()){
     showNewData();
-    deleteNumber();
-    delay(400);
     int parsed = parseData();
     writeNumber(parsed);
+    if(!programStarted){
+      programStarted = true;
+      Serial.println("Program started");
+    }
   }
 }
 
