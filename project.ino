@@ -74,6 +74,7 @@ void activateDigitWithNumber(){
   if(recvWithEndMarker()){
     showNewData();
     int parsed = parseData();
+    deleteNumber();
     writeNumber(parsed);
     if(!programStarted){
       programStarted = true;
