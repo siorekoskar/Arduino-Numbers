@@ -60,10 +60,9 @@ void setup() {
 }
 
 ////////////////////////////////////////MAIN LOOP/////////////////////////////////
-void loop() {
 
-for(int i=0; i<=4; i++){
-  startDigit(0);
+void numberWriter(int nums[4]){
+ /* startDigit(0);
   stopDigit(1);
   stopDigit(2);
   stopDigit(3);
@@ -89,8 +88,45 @@ for(int i=0; i<=4; i++){
   stopDigit(2);
   startDigit(3);
   writeNumber(3);
+delay(1);*/
+  for(int i =8; i>=0; i--){
+    startDigit(i);
+  stopDigit(i-1);
+  stopDigit(i-2);
+  stopDigit(i-3);
+  writeNumber(15);
   delay(1);
+
+  stopDigit(i);
+  startDigit(i-1);
+  stopDigit(i-2);
+  stopDigit(i-3);
+  writeNumber(14);
+  delay(1);
+
+  stopDigit(i);
+  stopDigit(i-1);
+  startDigit(i-2);
+  stopDigit(i-3);
+  writeNumber(15);
+  delay(1);
+
+  stopDigit(i);
+  stopDigit(i-1);
+  stopDigit(i-2);
+  startDigit(i-3);
+  writeNumber(12);
+  delay(500);
+  }
+  
+  
 }
+void loop() {
+int nums[4] = {0,1,2,3};
+numberWriter(nums);
+/*for(int i=0; i<=4; i++){
+  
+}*/
  // showNumber(value);
 /*for(int i = 0; i< 1000; i++){
   deleteNumber();
@@ -134,7 +170,7 @@ void writeOnDigit(int number, int digit){
 }
 
 ////////////////////////////////////////FUNCTIONS/////////////////////////////////
-void setDigit(int digit, int value){
+/*void setDigit(int digit, int value){
   if(digit <0 || digit > MAXDIGITS){
     Serial.println('bad digit number');
     return;
@@ -147,20 +183,18 @@ void setDigit(int digit, int value){
 
   value = numTable[value];
 
-  
+ 
+}*/
 
-  
-}
-
-void showDigit(int number, int digit){
+/*void showDigit(int number, int digit){
   digitalWrite(digits[digit], HIGH);
   writeNumber(numTable[number]);
   delay(5);
   digitalWrite(digits[digit], LOW);
-}
+}*/
 
-void digitChanger(){
- /*   for(int i = 3; i>=0; i--){
+/*void digitChanger(){
+    for(int i = 3; i>=0; i--){
       startDigit(digits[i]);
       startDigit(digits[i+1]);
  
@@ -178,8 +212,8 @@ void digitChanger(){
       stopDigit(digits[i+1]);
     }
 
-    }*/
-}
+    }
+}*/
 
 void activateDigitWithNumber(){
   if(recvWithEndMarker()){
