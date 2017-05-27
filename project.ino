@@ -90,12 +90,14 @@ void writeOnDigit(int number, int digit){
 
 void numberWriter(int nums[6]){
 
-  for(int i =8; i>=0; i--){
+  for(int i =10; i>=0; i--){
    for(int j =0 ; j<=10; j++){
     startDigit(i);
     stopDigit(i-1);
     stopDigit(i-2);
     stopDigit(i-3);
+    stopDigit(i-4);
+  stopDigit(i-5);
     writeNumber(nums[0]);
   
   delayMicroseconds(speedt);
@@ -104,6 +106,8 @@ void numberWriter(int nums[6]){
   startDigit(i-1);
   stopDigit(i-2);
   stopDigit(i-3);
+  stopDigit(i-4);
+  stopDigit(i-5);
   writeNumber(nums[1]);
 
 
@@ -113,6 +117,8 @@ void numberWriter(int nums[6]){
   stopDigit(i-1);
   startDigit(i-2);
   stopDigit(i-3);
+  stopDigit(i-4);
+  stopDigit(i-5);
   writeNumber(nums[2]);
 
   delayMicroseconds(speedt);
@@ -121,7 +127,30 @@ void numberWriter(int nums[6]){
   stopDigit(i-1);
   stopDigit(i-2);
   startDigit(i-3);
+  stopDigit(i-4);
+  stopDigit(i-5);
   writeNumber(nums[3]);
+
+  delayMicroseconds(speedt);
+  /////////////////////////jansuz
+
+  stopDigit(i);
+  stopDigit(i-1);
+  stopDigit(i-2);
+  stopDigit(i-3);
+  startDigit(i-4);
+  stopDigit(i-5);
+  writeNumber(nums[4]);
+
+  delayMicroseconds(speedt);
+
+  stopDigit(i);
+  stopDigit(i-1);
+  stopDigit(i-2);
+  stopDigit(i-3);
+  stopDigit(i-4);
+  startDigit(i-5);
+  writeNumber(nums[5]);
 
   delayMicroseconds(speedt);
 
@@ -223,9 +252,16 @@ boolean recvWithEndMarker() {
 }
 
 void setDigits(){
-  for(int i =0; i<= 3; i++){
+  for(int i =0; i<= 5; i++){
     char b = receivedChars[i+1];
-    nums[i] = b-48;
+    Serial.println(b);
+    if(b>=48 && b<=57){
+      nums[i] = b-48;
+      Serial.println(nums[i]);
+    } else if(b>=65 && b <=70){
+      nums[i] = b-55;
+      Serial.println(nums[i]);
+    }
   }
   if(newData){
     newData = false;
