@@ -1,12 +1,3 @@
-#define A 10
-#define B 11
-#define C 12
-#define D 13
-#define E 14
-#define F 15
-#define G 16
-#define DOT 13
-
 #define MAXDIGITS 3
 
 int numberRight;
@@ -16,8 +7,7 @@ const byte numChars = 32;
 char receivedChars[numChars]; 
 boolean newData = false;
 boolean programStarted = false;
-int speed = 400;
-int SRData[3][3];
+int speedt = 1000;
 
 byte string[6];
 
@@ -26,6 +16,7 @@ void setupBars();
 void setupDigits();
 void deleteNumber();
 void activateDigitWithNumber();
+void readSpeed();
 
 void showNewData();
 boolean recvWithEndMarker();
@@ -60,72 +51,25 @@ void setup() {
 }
 
 ////////////////////////////////////////MAIN LOOP/////////////////////////////////
+
 void loop() {
+  
+int nums[4] = {0,1,2,3};
+  activateDigitWithNumber();
 
-for(int i=0; i<=4; i++){
-  startDigit(0);
-  stopDigit(1);
-  stopDigit(2);
-  stopDigit(3);
-  writeNumber(0);
-  delay(1);
-
-  stopDigit(0);
-  startDigit(1);
-  stopDigit(2);
-  stopDigit(3);
-  writeNumber(1);
-  delay(1);
-
-  stopDigit(0);
-  stopDigit(1);
-  startDigit(2);
-  stopDigit(3);
-  writeNumber(2);
-  delay(1);
-
-  stopDigit(0);
-  stopDigit(1);
-  stopDigit(2);
-  startDigit(3);
-  writeNumber(3);
-  delay(1);
-}
- // showNumber(value);
-/*for(int i = 0; i< 1000; i++){
-  deleteNumber();
-  writeNumber(10);
-  digitalWrite(digits[0], LOW);
-  digitalWrite(digits[1], HIGH);
-  delay(500);
-  deleteNumber();
-  writeNumber(5);
-  digitalWrite(digits[0], HIGH);
-  digitalWrite(digits[1], LOW);
-  delay(500);
-  }*/
- // startDigit(3);
- // activateDigitWithNumber();
- /* if(programStarted){
+  /*if(programStarted){
     digitChanger(); 
   } else{
+    int delayt = readSpeed();
      activateDigitWithNumber();
   }*/
+  
 
-//if(programStarted){
-  /*analogWrite(digits[0],250);
-  delay(1000);
-  Serial.println("siema");
-  analogWrite(digits[0], 10);
-  delay(1000);
-  analogWrite(digits[1], 40);
-  digitalWrite(pins[2], LOW);
-  delay(1000);
- // analogWrite(digits[0], 10);
-  //delayMicroseconds(4000);*/
+  recvWithEndMarker();
+    
+  
+  numberWriter(nums);
 
-
-//}
 }
 
 void writeOnDigit(int number, int digit){
@@ -134,63 +78,59 @@ void writeOnDigit(int number, int digit){
 }
 
 ////////////////////////////////////////FUNCTIONS/////////////////////////////////
-void setDigit(int digit, int value){
-  if(digit <0 || digit > MAXDIGITS){
-    Serial.println('bad digit number');
-    return;
-  }
 
-  if(value <0 || value > 8){
-    Serial.println("invalid value");
-    return;
-  }
+void numberWriter(int nums[4]){
 
-  value = numTable[value];
-
+  for(int i =8; i>=0; i--){
+   for(int j =0 ; j<=10; j++){
+    startDigit(i);
+    stopDigit(i-1);
+    stopDigit(i-2);
+    stopDigit(i-3);
+    writeNumber(nums[0]);
   
+  delayMicroseconds(speedt);
 
+  stopDigit(i);
+  startDigit(i-1);
+  stopDigit(i-2);
+  stopDigit(i-3);
+  writeNumber(nums[1]);
+
+
+  delayMicroseconds(speedt);
   
-}
+  stopDigit(i);
+  stopDigit(i-1);
+  startDigit(i-2);
+  stopDigit(i-3);
+  writeNumber(nums[2]);
 
-void showDigit(int number, int digit){
-  digitalWrite(digits[digit], HIGH);
-  writeNumber(numTable[number]);
-  delay(5);
-  digitalWrite(digits[digit], LOW);
-}
+  delayMicroseconds(speedt);
 
-void digitChanger(){
- /*   for(int i = 3; i>=0; i--){
-      startDigit(digits[i]);
-      startDigit(digits[i+1]);
- 
-      activateDigitWithNumber();
-      delay(speed);
-      if(i == 3){
-        stopDigit(digits[0]);
-      }
-      if(i == 0){
-      stopDigit(digits[1]);
-      startDigit(digits[0]);
-      stopDigit(digits[1]);
-    } else {
-     stopDigit(digits[i]);
-      stopDigit(digits[i+1]);
+  stopDigit(i);
+  stopDigit(i-1);
+  stopDigit(i-2);
+  startDigit(i-3);
+  writeNumber(nums[3]);
+
+  delayMicroseconds(speedt);
     }
-
-    }*/
+  }  
 }
+
 
 void activateDigitWithNumber(){
-  if(recvWithEndMarker()){
-    showNewData();
+ /* if(recvWithEndMarker()){
+    //showNewData();
     int parsed = parseData();
-    deleteNumber();
-    writeNumber(parsed);
-    if(!programStarted){
-      startProgram();
-    }
-  }
+    speedt = parsed;
+    //deleteNumber();
+   //iteNumber(parsed);
+   // if(!programStarted){
+//      startProgram();
+//    }
+  }*/
 }
 
 boolean startProgram(){
@@ -258,6 +198,9 @@ boolean recvWithEndMarker() {
     receivedChars[ndx] = '\0'; // terminate the string
     ndx = 0;
     newData = true;
+    if(receivedChars[0] == 's'){
+      readSpeed();
+    }
     return true;
    }
  }
@@ -265,7 +208,7 @@ boolean recvWithEndMarker() {
 }
 
 void showNewData() {
- if (newData == true) {
+ if (newData) {
  Serial.print("This just in ... ");
  Serial.println(receivedChars);
  newData = false;
@@ -278,5 +221,16 @@ int parseData(){
    Serial.println(numberRead);
    numberRight = numberRead;
    return numberRead;
+}
+
+void readSpeed(){
+
+  int numberRead = atoi(receivedChars+1);
+  Serial.print("SPEED: ");
+  Serial.println(numberRead);
+  speedt = numberRead;
+  if(newData){
+    newData = false;
+  }
 }
 
