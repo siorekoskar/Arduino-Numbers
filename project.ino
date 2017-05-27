@@ -62,7 +62,7 @@ void setup() {
 ////////////////////////////////////////MAIN LOOP/////////////////////////////////
 
 void numberWriter(int nums[4]){
- /* startDigit(0);
+  /*startDigit(0);
   stopDigit(1);
   stopDigit(2);
   stopDigit(3);
@@ -88,36 +88,49 @@ void numberWriter(int nums[4]){
   stopDigit(2);
   startDigit(3);
   writeNumber(3);
-delay(1);*/
+delay(50);*/
   for(int i =8; i>=0; i--){
+   // for(int j =0; j<= 32000;j++){
+   for(int j =0 ; j<=5; j++){
     startDigit(i);
   stopDigit(i-1);
   stopDigit(i-2);
   stopDigit(i-3);
   writeNumber(15);
-  delay(1);
+  delayMicroseconds(4500);
+
+  //delay(50);
 
   stopDigit(i);
   startDigit(i-1);
   stopDigit(i-2);
   stopDigit(i-3);
   writeNumber(14);
-  delay(1);
+  delayMicroseconds(4500);
+
+  //delay(50);
 
   stopDigit(i);
   stopDigit(i-1);
   startDigit(i-2);
   stopDigit(i-3);
-  writeNumber(15);
-  delay(1);
+  writeNumber(13);
+  delayMicroseconds(4500);
+
+  //delay(50);
 
   stopDigit(i);
   stopDigit(i-1);
   stopDigit(i-2);
   startDigit(i-3);
   writeNumber(12);
-  delay(500);
+
+  delayMicroseconds(4500);
+    }
   }
+
+ // delay(50);
+  //}
   
   
 }
