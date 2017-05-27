@@ -1,19 +1,14 @@
-#define A 10
-#define B 11
-#define C 12
-#define D 13
-#define E 14
-#define F 15
-#define G 16
-#define DOT 13
+#define MAXDIGITS 3
 
+int numberRight;
 byte digits[4] = {3,5,6,9};
 byte pins[8] = {2,4,7,8,10,11,12,13};
 const byte numChars = 32;
 char receivedChars[numChars]; 
 boolean newData = false;
 boolean programStarted = false;
-int speed = 400;
+
+byte string[6];
 
 void writeNumber(int whichNumber);
 void setupBars();
@@ -25,7 +20,7 @@ void showNewData();
 boolean recvWithEndMarker();
 int parseData();
 
-byte arr[16] = {
+const int numTable[16] = {
     B11111100, //0
     B01100000, //1
     B11011010, //2
@@ -50,46 +45,92 @@ void setup() {
   Serial.println("<Arduino is ready>");
   setupDigits();
   setupBars();
+  
 }
 
 ////////////////////////////////////////MAIN LOOP/////////////////////////////////
-void loop() {
 
-  startDigit(3);
-  activateDigitWithNumber();
+void loop() {
+  
+int nums[4] = {0,1,2,3};
+numberWriter(nums);
+
  /* if(programStarted){
     digitChanger(); 
   } else{
      activateDigitWithNumber();
   }*/
-  //analogWrite(3, 15);
-  //analogWrite(5, 50);
+
+}
+
+void writeOnDigit(int number, int digit){
+  analogWrite(digits[digit], 250);
+    writeNumber(number);
 }
 
 ////////////////////////////////////////FUNCTIONS/////////////////////////////////
-void writeMethod
 
-void digitChanger(){
- /*   for(int i = 3; i>=0; i--){
-      startDigit(digits[i]);
-      startDigit(digits[i+1]);
- 
-      activateDigitWithNumber();
-      delay(speed);
-      if(i == 3){
-        stopDigit(digits[0]);
-      }
-      if(i == 0){
-      stopDigit(digits[1]);
-      startDigit(digits[0]);
-      stopDigit(digits[1]);
-    } else {
-     stopDigit(digits[i]);
-      stopDigit(digits[i+1]);
+void numberWriter(int nums[4]){
+
+  for(int i =8; i>=0; i--){
+   for(int j =0 ; j<=10; j++){
+    startDigit(i);
+    stopDigit(i-1);
+    stopDigit(i-2);
+    stopDigit(i-3);
+    //writeNumber(nums[0]);
+   digitalWrite(pins[0], HIGH);
+  digitalWrite(pins[1], LOW);
+  digitalWrite(pins[2], LOW);
+  digitalWrite(pins[3], LOW);
+  digitalWrite(pins[4], HIGH);
+  digitalWrite(pins[5], HIGH);
+  digitalWrite(pins[6], HIGH);
+  
+  delayMicroseconds(4500);
+
+  stopDigit(i);
+  startDigit(i-1);
+  stopDigit(i-2);
+  stopDigit(i-3);
+  //writeNumber(nums[1]);
+  digitalWrite(pins[0], HIGH);
+  digitalWrite(pins[1], LOW);
+  digitalWrite(pins[2], LOW);
+  digitalWrite(pins[3], LOW);
+  digitalWrite(pins[4], LOW);
+  digitalWrite(pins[5], LOW);
+  digitalWrite(pins[6], HIGH);
+
+  delayMicroseconds(4500);
+  
+  stopDigit(i);
+  stopDigit(i-1);
+  startDigit(i-2);
+  stopDigit(i-3);
+  //writeNumber(nums[2]);
+  digitalWrite(pins[0], HIGH);
+  digitalWrite(pins[1], LOW);
+  digitalWrite(pins[2], LOW);
+  digitalWrite(pins[3], HIGH);
+  digitalWrite(pins[4], LOW);
+  digitalWrite(pins[5], LOW);
+  digitalWrite(pins[6], LOW);
+  
+  delayMicroseconds(4500);
+
+  stopDigit(i);
+  stopDigit(i-1);
+  stopDigit(i-2);
+  startDigit(i-3);
+  //writeNumber(nums[3]);
+  writeNumber(12);
+
+  delayMicroseconds(4500);
     }
-
-    }*/
+  }  
 }
+
 
 void activateDigitWithNumber(){
   if(recvWithEndMarker()){
@@ -110,7 +151,7 @@ boolean startProgram(){
 
 void writeNumber(int whichNumber){
   for(byte i = 7; i >= 1;i--){
-    if(bitRead(arr[whichNumber], i)){
+    if(bitRead(numTable[whichNumber], i)){
       digitalWrite(pins[7 -i], LOW);
     }
   }
@@ -143,6 +184,7 @@ void startDigit(int num){
 }
 
 void stopDigit(int num){
+  deleteNumber();
   if(num <=3 && num >=0 ){
     digitalWrite(digits[num], LOW);
   }
@@ -185,5 +227,7 @@ int parseData(){
    int numberRead = atoi(receivedChars);
    Serial.print("I read number: ");
    Serial.println(numberRead);
+   numberRight = numberRead;
    return numberRead;
 }
+
