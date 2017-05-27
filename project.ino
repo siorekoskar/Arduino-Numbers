@@ -12,9 +12,10 @@ const byte numChars = 32;
 char receivedChars[numChars]; 
 boolean newData = false;
 boolean programStarted = false;
-int speedt = 1000;
+int speedt = 4500;
 int brightness =255;
 int brightns[4] = {255,255,255,255};
+int nums[6] = {0,1,2,3,4,5};
 
 byte string[6];
 
@@ -62,7 +63,7 @@ void setup() {
 
 void loop() {
   
-int nums[4] = {0,1,2,3};
+
   activateDigitWithNumber();
 
   /*if(programStarted){
@@ -87,7 +88,7 @@ void writeOnDigit(int number, int digit){
 
 ////////////////////////////////////////FUNCTIONS/////////////////////////////////
 
-void numberWriter(int nums[4]){
+void numberWriter(int nums[6]){
 
   for(int i =8; i>=0; i--){
    for(int j =0 ; j<=10; j++){
@@ -123,6 +124,7 @@ void numberWriter(int nums[4]){
   writeNumber(nums[3]);
 
   delayMicroseconds(speedt);
+
     }
   }  
 }
@@ -211,11 +213,23 @@ boolean recvWithEndMarker() {
       readSpeed();
     } else if( receivedChars[0] == 'B'){
       readBrghtns();
+    } else if (receivedChars[0] == 'T'){
+      setDigits();
     }
     return true;
    }
  }
  return false;
+}
+
+void setDigits(){
+  for(int i =0; i<= 3; i++){
+    char b = receivedChars[i+1];
+    nums[i] = b-48;
+  }
+  if(newData){
+    newData = false;
+  }
 }
 
 void showNewData() {
