@@ -79,68 +79,47 @@ void writeOnDigit(int number, int digit){
 void numberWriter(int nums[6]){
 
   for(int i =10; i>=0; i--){
+    
    for(int j =0 ; j<=10; j++){
-    startDigit(i);
+    int z = 5;
+    
+   for(int d = 0; d<= 5; d++){
+    startDigit(i-d);
+
+  if(d == 0){
     stopDigit(i-1);
+  } else{
+    stopDigit(i);
+  }
+
+  if(d==0 || d==1){
     stopDigit(i-2);
+  } else{
+    stopDigit(i-1);
+  }
+
+  if(d==2 || d == 1 || d==0){
     stopDigit(i-3);
+  } else{
+    stopDigit(i-2);
+  }
+
+  if(d != 5 && d != 4){
     stopDigit(i-4);
-  stopDigit(i-5);
-    writeNumber(nums[5]);
-  
+  } else {
+    stopDigit(i-3);
+  }
+
+  if(d != 5){
+    stopDigit(i-5);
+  } else {
+    stopDigit(i-4);
+  }
+  writeNumber(nums[z]);
   delayMicroseconds(speedt);
-
-  stopDigit(i);
-  startDigit(i-1);
-  stopDigit(i-2);
-  stopDigit(i-3);
-  stopDigit(i-4);
-  stopDigit(i-5);
-  writeNumber(nums[4]);
-
-  delayMicroseconds(speedt);
-  
-  stopDigit(i);
-  stopDigit(i-1);
-  startDigit(i-2);
-  stopDigit(i-3);
-  stopDigit(i-4);
-  stopDigit(i-5);
-  writeNumber(nums[3]);
-
-  delayMicroseconds(speedt);
-
-  stopDigit(i);
-  stopDigit(i-1);
-  stopDigit(i-2);
-  startDigit(i-3);
-  stopDigit(i-4);
-  stopDigit(i-5);
-  writeNumber(nums[2]);
-
-  delayMicroseconds(speedt);
-
-  stopDigit(i);
-  stopDigit(i-1);
-  stopDigit(i-2);
-  stopDigit(i-3);
-  startDigit(i-4);
-  stopDigit(i-5);
-  writeNumber(nums[1]);
-
-  delayMicroseconds(speedt);
-
-  stopDigit(i);
-  stopDigit(i-1);
-  stopDigit(i-2);
-  stopDigit(i-3);
-  stopDigit(i-4);
-  startDigit(i-5);
-  writeNumber(nums[0]);
-
-  delayMicroseconds(speedt);
+  z--;
+}
   recvWithEndMarker();
-
     }
   }  
 }
