@@ -180,15 +180,14 @@ boolean recvWithEndMarker() {
  
  while (Serial.available() > 0 && newData == false) {
   rc = Serial.read();
-
   if (rc != endMarker) {
     receivedChars[ndx] = rc;
     ndx++;
     if (ndx >= numChars) {
       ndx = numChars - 1;
     }
-   }
-   else {
+  }
+  else {
     receivedChars[ndx] = '\0'; // terminate the string
     ndx = 0;
     newData = true;
@@ -198,6 +197,12 @@ boolean recvWithEndMarker() {
       readBrghtns();
     } else if (receivedChars[0] == 'T'){
       setDigits();
+    } else {
+      Serial.println("Komenda musi zaczynać się od 'T', 'D' lub 'B'");
+      if (newData) {
+        newData = false;
+      }
+      return false;
     }
     return true;
    }
@@ -206,20 +211,31 @@ boolean recvWithEndMarker() {
 }
 
 void setDigits(){
-  for(int i =0; i<= 5; i++){
-    char b = receivedChars[i+1];
-    Serial.println(b);
-    if(b>=48 && b<=57){
-      nums[i] = b-48;
-      Serial.println(nums[i]);
-    } else if(b>=65 && b <=70){
-      nums[i] = b-55;
-      Serial.println(nums[i]);
-    }
-  }
   if(newData){
     newData = false;
   }
+  for(int i=0; i<= 5; i++){
+    char b = receivedChars[i+1];
+    if(!(b>=48 && b<=57 || b>=65 && b <=70)) {
+      Serial.println("Znak musi być z przedziału (0, F)");
+      return;
+    } 
+  }
+  if (receivedChars[8] != '\0') {
+    Serial.println("Za długa komenda");
+    return;
+  }
+  Serial.print("NAPIS: ");
+  for(int i=0; i<= 5; i++){
+    char b = receivedChars[i+1];
+    Serial.print(b);
+    if(b>=48 && b<=57){
+      nums[i] = b-48;
+    } else if(b>=65 && b <=70){
+      nums[i] = b-55;
+    } 
+  }
+  Serial.println();
 }
 
 void showNewData() {
@@ -239,6 +255,24 @@ int parseData(){
 }
 
 void readBrghtns(){
+  if(newData){
+    newData = false;
+  }
+  for(int i=0; i<=3; i++){
+    char b = receivedChars[i+1];
+    if (b != '0' && b != '1' && b != '2') {
+      Serial.println("Komenda musi się składać z 0, 1 lub 2");
+      if (newData) {
+        newData = false;
+      }
+      return;
+    }
+  }
+  if (receivedChars[6] != '\0') {
+    Serial.println("Za długa komenda");
+    return;
+  }
+  Serial.print("JASNOŚĆ: ");
   for(int i =0; i<=3; i++){
     char b = receivedChars[i+1];
     switch(b){
@@ -252,20 +286,22 @@ void readBrghtns(){
         brightns[i] = high;
        break;
     }
+    Serial.print(b);
   }
-  if(newData){
-    newData = false;
-  }
+  Serial.println();
 }
 
 void readSpeed(){
-
-  int numberRead = atoi(receivedChars+1);
-  Serial.print("SPEED: ");
-  Serial.println(numberRead);
-  speedt = numberRead;
   if(newData){
     newData = false;
   }
+  int numberRead = atoi(receivedChars+1);
+  if (numberRead < 1 || numberRead > 9999) {
+    Serial.println("Czas musi być w granicach (1, 9999)");
+    return;
+  }
+  Serial.print("CZAS: ");
+  Serial.println(numberRead);
+  speedt = numberRead;
 }
 
