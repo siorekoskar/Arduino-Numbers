@@ -4,6 +4,12 @@ int dark = 10;
 int medium = 100;
 int high = 255;
 
+#define A 10
+#define B 11
+#define C 12
+#define D 13
+#define E 14
+#define F 15
 
 int numberRight;
 byte digits[4] = {3,5,6,9};
@@ -12,10 +18,10 @@ const byte numChars = 32;
 char receivedChars[numChars]; 
 boolean newData = false;
 boolean programStarted = false;
-int speedt = 4500;
+int DISP = 4500;
 int brightness =255;
-int brightns[4] = {255,255,255,255};
-int nums[6] = {0,1,2,3,4,5};
+int BRIGHT[4] = {255,255,255,255};
+int TEXT[6] = {0,1,2,3,4,5};
 
 byte string[6];
 
@@ -27,9 +33,7 @@ void deleteNumber();
 void activateDigitWithNumber();
 void readSpeed();
 
-void showNewData();
 boolean recvWithEndMarker();
-int parseData();
 
 const int numTable[16] = {
     B11111100, //0
@@ -62,28 +66,25 @@ void setup() {
 ////////////////////////////////////////MAIN LOOP/////////////////////////////////
 
 void loop() {
-  
-    
-  
-  numberWriter(nums);
-
-}
-
-void writeOnDigit(int number, int digit){
-  analogWrite(digits[digit], 250);
-    writeNumber(number);
+  numberWriter(TEXT);
 }
 
 ////////////////////////////////////////FUNCTIONS/////////////////////////////////
 
-void numberWriter(int nums[6]){
+
+/**
+ * wyświetlanie napisu
+ * @param: TEXT - tablica intów numerów do wyświetlenia
+ */
+void numberWriter(int TEXT[6]){
 
   for(int i =10; i>=0; i--){
     
-   for(int j =0 ; j<=10; j++){
+   for(int j =0 ; j<=14; j++){
     int z = 5;
     
    for(int d = 0; d<= 5; d++){
+
     startDigit(i-d);
 
   if(d == 0){
@@ -115,22 +116,21 @@ void numberWriter(int nums[6]){
   } else {
     stopDigit(i-4);
   }
-  writeNumber(nums[z]);
-  delayMicroseconds(speedt);
+      writeNumber(TEXT[z]);
+  delayMicroseconds(DISP);
   z--;
+  
 }
+
   recvWithEndMarker();
     }
   }  
 }
 
-
-
-boolean startProgram(){
-  programStarted = true;
-  Serial.println("Program started");
-}
-
+/**
+ * porównanie każdego bitu z tablicą stałych liczb numTable
+ * @whichNumber - zmienna określająca który numer wyświetlić
+ */ 
 void writeNumber(int whichNumber){
   for(byte i = 7; i >= 1;i--){
     if(bitRead(numTable[whichNumber], i)){
@@ -139,12 +139,18 @@ void writeNumber(int whichNumber){
   }
 }
 
+/**
+ * wyłącza wszystkie ledy
+ */
 void deleteNumber(){
   for(int i =0; i<= 7; i++){
     digitalWrite(pins[i], HIGH);
   }
 }
 
+/**
+ * ustawia wszystkie segmenty na output
+ */
 void setupDigits(){
   for(int i=0; i<=3;i++){
     pinMode(digits[i],OUTPUT);
@@ -152,6 +158,9 @@ void setupDigits(){
   }
 }
 
+/**
+ * ustawia wszystkie piny na output
+ */
 void setupBars(){
   for(int i = 0; i<=8; i++){
     pinMode(pins[i], OUTPUT);
@@ -159,20 +168,32 @@ void setupBars(){
   }
 }
 
+/**
+ * włącza dany segment i ustawia jego jasność
+ * @sum - numer segmentu
+ */
 void startDigit(int num){
   if(num <=3 && num >=0){
-     analogWrite(digits[num], brightns[num]);
+     analogWrite(digits[num], BRIGHT[num]);
   }
 }
 
+/**
+ * wyłącza dany segment
+ * @num - numer segmentu
+ */
 void stopDigit(int num){
   deleteNumber();
   if(num <=3 && num >=0 ){
-    //digitalWrite(digits[num], LOW);
     analogWrite(digits[num], 0);
   }
 }
 
+/**
+ * funkcja w pętli czyta każdy znak po kolei i zapisuje w naszej tablicy TEXT.
+ * Za każdym razem sprawdzane jest,  czy dany znak nie jest znakiem końca linii
+ * – jeżeli tak, do tablicy zapisywany jest znak końca stringa i w zależności od pierwszego znaku wywołuje odpowiednią funkcję.
+ */
 boolean recvWithEndMarker() {
  static byte ndx = 0;
  char endMarker = '\n';
@@ -210,6 +231,7 @@ boolean recvWithEndMarker() {
  return false;
 }
 
+//wczytywanie napisu z konsoli
 void setDigits(){
   if(newData){
     newData = false;
@@ -230,30 +252,17 @@ void setDigits(){
     char b = receivedChars[i+1];
     Serial.print(b);
     if(b>=48 && b<=57){
-      nums[i] = b-48;
+      TEXT[i] = b-48;
     } else if(b>=65 && b <=70){
-      nums[i] = b-55;
+      TEXT[i] = b-55;
     } 
   }
   Serial.println();
 }
 
-void showNewData() {
- if (newData) {
- Serial.print("This just in ... ");
- Serial.println(receivedChars);
- newData = false;
- }
-}
-
-int parseData(){
-   int numberRead = atoi(receivedChars);
-   Serial.print("I read number: ");
-   Serial.println(numberRead);
-   numberRight = numberRead;
-   return numberRead;
-}
-
+/**
+ * wczytuje jasność ekranu z konsoli
+ */
 void readBrghtns(){
   if(newData){
     newData = false;
@@ -277,13 +286,13 @@ void readBrghtns(){
     char b = receivedChars[i+1];
     switch(b){
       case '0':
-        brightns[i] = dark;
+        BRIGHT[i] = dark;
       break;
       case '1':
-        brightns[i] = medium;
+        BRIGHT[i] = medium;
         break;
       case '2':
-        brightns[i] = high;
+        BRIGHT[i] = high;
        break;
     }
     Serial.print(b);
@@ -291,6 +300,9 @@ void readBrghtns(){
   Serial.println();
 }
 
+/**
+ * wczytuje prędkość z konsoli
+ */
 void readSpeed(){
   if(newData){
     newData = false;
@@ -302,6 +314,5 @@ void readSpeed(){
   }
   Serial.print("CZAS: ");
   Serial.println(numberRead);
-  speedt = numberRead;
+  DISP = numberRead;
 }
-
